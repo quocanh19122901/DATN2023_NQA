@@ -1,0 +1,29 @@
+{
+  "name": "do-an",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quocanh19122901/DATN2023_NQA.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/quocanh19122901/DATN2023_NQA/issues"
+  },
+  "homepage": "https://github.com/quocanh19122901/DATN2023_NQA#readme",
+  "dependencies": {
+    "add": "^2.0.6",
+    "crypto-js": "^4.1.1",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.0.1",
+    "nodemon": "^2.0.21"
+  }
+}
