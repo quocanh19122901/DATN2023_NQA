@@ -6,63 +6,66 @@ const router = require("express").Router();
 router.post("/",verifyTokenAndAmin,async(req,res)=>{
     const newProduct = new Product(req.body);
     try {
-        const saveProduct = new Product.save();
+        const saveProduct = await newProduct.save();
         res.status(200).json(saveProduct);
     } catch (error) {
         res.status(500).json(error);
     }
 })
-// //UPDATE
-// router.put("/:id", verifyTokenAndAuthorization, async (req,res)=> {
-//    if(req.body.password) {
-//     req.body.password = CryptoJS.AES.encrypt(
-//         req.body.password,process.env.PASS_SEC)
-//         .toString();
-//    }
-//    try {
-//     const updateUser = await User.findByIdAndUpdate(req.params.id, {
-//         $set: req.body
-//     },{new:true})
-//     res.status(200).json(updateUser);
+//UPDATE 
+router.put("/:id", verifyTokenAndAuthorization, async (req,res)=> {
+   try {
+    const updateProduct = await Product.findByIdAndUpdate(req.params.id, {
+        $set: req.body
+    },{new:true})
+    res.status(200).json(updateProduct);
 
-//    } catch (error) {
-//     res.status(500).json(err);
-//    }
-// })
+   } catch (error) {
+    res.status(500).json(err);
+   }
+})
 
 
-// //DELETE
-// router.delete("/:id",verifyTokenAndAuthorization, async (req,res) => {
-//     try{
-//         await User.findByIdAndDelete(req.params.id)
-//         res.status(200).json("User has been deleted !")
-//     }catch(err){
-//         res.status(500).json(err);
-//     }
-// })
+//DELETE
+router.delete("/:id",verifyTokenAndAmin, async (req,res) => {
+    try{
+        await Product.findByIdAndDelete(req.params.id)
+        res.status(200).json("Product has been deleted !")
+    }catch(err){
+        res.status(500).json(err);
+    }
+})
 
-// //GET USER
-// router.get("/find/:id",verifyTokenAndAmin, async (req,res) => {
-//     try{
-//         await User.findById(req.params.id);
-//         const {password, ...others}= user._doc;
-//         res.status(200).json(others);
-//     }catch(err){
-//         res.status(500).json(err);
-//     }
-// })
-// //GET ALL USER
-// router.get("/",verifyTokenAndAmin, async (req,res) => {
-//     const query = req.query.new
-//     try{
-//         const users = query 
-//         ? await User.find().sort({_id: -1}).limit(5)
-//         : await User.find();
-//         res.status(200).json(users);
-//     }catch(err){
-//         res.status(500).json(err);
-//     }
-// });
+//GET PRODUCT
+router.get("/find/:id",verifyTokenAndAmin, async (req,res) => {
+    try{
+        const product = await Product.findById(req.params.id);
+        res.status(200).json(product);
+    }catch(err){
+        res.status(500).json(err);
+    }
+})
+//GET ALL PRODUCT
+router.get("/", async (req,res) => {
+    const qNew = req.query.new;
+    const qCategory  = req.query.category;
+    try{
+        let products ;
+        if(qNew) {
+            products = await Products.find().sort({createAt: -1}).limit(5);
+        }else if (qCategory) {
+            products = await Product.find({category:{
+                $in: [qCategory],
+            },
+        });
+        }else {
+            products = await Product.find();
+        }
+        res.status(200).json(products);
+    }catch(err){
+        res.status(500).json(err);
+    }
+});
 
 // //GET USER STAT
 
