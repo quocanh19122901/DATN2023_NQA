@@ -10,6 +10,7 @@ router.post("/register", async (req,res)=>{
         username : req.body.username,
         email : req.body.email,
         password : CryptoJS.AES.encrypt(req.body.password,process.env.PASS_SEC).toString(),
+        isAdmin : req.body.isAdmin,
     });
     try {
         const savedUser = await newUser.save();
@@ -23,11 +24,11 @@ router.post("/register", async (req,res)=>{
 router.post("/login",async (req, res) => {
     try {
         const user = await User.findOne({username : req.body.username});
-        !user && res.status(401).json("Wrong!")
+        !user && res.status(401).json("Wrong account or password !")
 
         const hashedPassword = CryptoJS.AES.decrypt(user.password, process.env.PASS_SEC);
         const OriginalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
-        OriginalPassword != req.body.password && res.status(401).json("Wrong password");
+        OriginalPassword != req.body.password && res.status(401).json("Wrong account or password !");
 
         const accessToken = jwt.sign({
             id: user._id ,
