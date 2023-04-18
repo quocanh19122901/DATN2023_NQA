@@ -1,10 +1,11 @@
 const { verifyToken, verifyTokenAndAuthorization, verifyTokenAndAmin } = require("./verifyToken");
 const User = require("../models/User")
 const router = require("express").Router();
-
+var cors = require("cors");
+router.use(cors());
 
 //UPDATE
-router.put("/:id", verifyTokenAndAuthorization, async (req,res)=> {
+router.put("/:id", async (req,res)=> {
    if(req.body.password) {
     req.body.password = CryptoJS.AES.encrypt(
         req.body.password,process.env.PASS_SEC)
@@ -42,7 +43,7 @@ router.get("/find/:id", async (req,res) => {
     }
 })
 //GET ALL USER
-router.get("/",verifyTokenAndAmin, async (req,res) => {
+router.get("/", async (req,res) => {
     const query = req.query.new
     try{
         const users = query 
@@ -54,7 +55,7 @@ router.get("/",verifyTokenAndAmin, async (req,res) => {
     }
 });
 
-//GET USER STAT
+//GET MONTHLY INCOME
 
 router.get("/stats", verifyTokenAndAmin, async (req, res)=>{
    const date = new Date();

@@ -19,6 +19,7 @@
   "homepage": "https://github.com/quocanh19122901/DATN2023_NQA#readme",
   "dependencies": {
     "add": "^2.0.6",
+    "cors": "^2.8.5",
     "crypto-js": "^4.1.1",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",

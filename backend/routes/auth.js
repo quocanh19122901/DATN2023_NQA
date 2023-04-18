@@ -6,9 +6,9 @@ const cookieParser = require("cookie-parser");
 
 // Thêm middleware để cho phép truy cập từ các trang web khác
 router.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
   next();
 });
 
@@ -37,16 +37,16 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const user = await User.findOne({ username: req.body.username });
-    !user && res.status(401).json("Wrong account or password !");
+    if (!user) return res.status(401).json("Wrong account or password!");
 
     const hashedPassword = CryptoJS.AES.decrypt(
       user.password,
       process.env.PASS_SEC
     );
     const OriginalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
-    OriginalPassword != req.body.password &&
-      res.status(401).json("Wrong account or password !");
-
+    if (OriginalPassword !== req.body.password) {
+      return res.status(401).json("Wrong account or password!");
+    }
     const accessToken = jwt.sign(
       {
         id: user._id,
@@ -63,12 +63,10 @@ router.post("/login", async (req, res) => {
     }); // JWT sẽ hết hạn sau 3 ngày
 
     const { password, ...others } = user._doc;
-    res.status(200).json({ ...others,accessToken});
+    res.status(200).json({ ...others, accessToken });
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json("Internal Server Error");
   }
 });
-
-
 
 module.exports = router;

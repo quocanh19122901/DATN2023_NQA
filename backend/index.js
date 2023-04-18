@@ -8,14 +8,14 @@ const productRoute = require("./routes/products");
 const orderRoute = require("./routes/order");
 const SubcategoryRoute = require("./routes/SubCategory");
 const CategoryRoute = require("./routes/category");
+const CartRoute = require("./routes/cart");
 
 dotenv.config();
 
 mongoose
-    .connect(process.env.MONGO_URL)
-    .then(()=>console.log("DBconnect"))
-    .catch((err) => console.log(err));
-
+  .connect(process.env.MONGO_URL)
+  .then(() => console.log("DBconnect"))
+  .catch((err) => console.log(err));
 
 app.use(express.json());
 app.use("/api/auth", authRoute);
@@ -24,11 +24,7 @@ app.use("/api/products", productRoute);
 app.use("/api/order", orderRoute);
 app.use("/api/category", CategoryRoute);
 app.use("/api/category/subcategory", SubcategoryRoute);
-
-
-
-
-
+app.use("/api/cart", CartRoute);
 app.listen(process.env.PORT || 5000, () => {
-    console.log("BE server is running !");
-})
+  console.log("BE server is running !");
+});

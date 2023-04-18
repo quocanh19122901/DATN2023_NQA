@@ -9,6 +9,11 @@ const categorySchema = new mongoose.Schema(
       ref: "Category",
       required: true,
     },
+    ProductId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Products",
+      required: true,
+    },
   },
   { timestamps: true }
 );
