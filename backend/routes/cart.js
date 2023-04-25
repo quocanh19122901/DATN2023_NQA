@@ -23,7 +23,6 @@ router.post("/", async (req, res) => {
       "product.productId": productId,
       "product.size": size,
       "product.color": color,
-      "product.quantity": quantity,
     });
     if (cart) {
       // nếu sản phẩm đã có trong giỏ hàng, tăng số lượng sản phẩm lên 1
@@ -34,9 +33,8 @@ router.post("/", async (req, res) => {
           "product.size": size,
           "product.color": color,
           "product.price": price,
-          "product.quantity": quantity,
         },
-        { $inc: { "product.$.quantity": 1 } },
+        { $inc: { "product.$.quantity": quantity } },
         { new: true }
       );
       res.status(200).json(updatedCart);
