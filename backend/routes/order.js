@@ -6,19 +6,19 @@ const {
 const router = require("express").Router();
 const Order = require("../models/Orders");
 //CREATE
-router.post("/",async(req,res)=>{
+router.post("/", async (req, res) => {
   const newOrder = new Order(req.body);
   try {
-      const saveOrder = await newOrder.save();
-      res.status(200).json(saveOrder);
+    const saveOrder = await newOrder.save();
+    res.status(200).json(saveOrder);
   } catch (error) {
-      res.status(500).json(error);
+    res.status(500).json(error);
   }
-})
+});
 //GET USER ORDER
-router.get("/find/:id", verifyTokenAndAuthorization, async (req, res) => {
+router.get("/:id", verifyTokenAndAuthorization, async (req, res) => {
   try {
-    const order = await Order.find({userId: req.params.id});
+    const order = await Order.find({ userId: req.params.id });
     res.status(200).json(order);
   } catch (err) {
     res.status(500).json(err);

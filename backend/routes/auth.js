@@ -3,6 +3,7 @@ const router = require("express").Router();
 const CryptoJS = require("crypto-js");
 const jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
+const { requireAuth } = require("../middleware/authLogin");
 
 // Thêm middleware để cho phép truy cập từ các trang web khác
 router.use((req, res, next) => {
@@ -68,5 +69,7 @@ router.post("/login", async (req, res) => {
     res.status(500).json("Internal Server Error");
   }
 });
-
+router.get("/dashboard", requireAuth, (req, res) => {
+  res.render("dashboard");
+});
 module.exports = router;
