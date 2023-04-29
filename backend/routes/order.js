@@ -5,6 +5,8 @@ const {
 } = require("./verifyToken");
 const router = require("express").Router();
 const Order = require("../models/Orders");
+var cors = require("cors");
+router.use(cors());
 //CREATE
 router.post("/", async (req, res) => {
   const newOrder = new Order(req.body);
@@ -12,11 +14,11 @@ router.post("/", async (req, res) => {
     const saveOrder = await newOrder.save();
     res.status(200).json(saveOrder);
   } catch (error) {
-    res.status(500).json(error);
+    res.status(500).json("error");
   }
 });
 //GET USER ORDER
-router.get("/:id", verifyTokenAndAuthorization, async (req, res) => {
+router.get("/myorder", verifyToken, async (req, res) => {
   try {
     const order = await Order.find({ userId: req.params.id });
     res.status(200).json(order);
@@ -27,7 +29,7 @@ router.get("/:id", verifyTokenAndAuthorization, async (req, res) => {
 //GET ALL
 router.get("/", verifyTokenAndAmin, async (req, res) => {
   try {
-    const orders = await Cart.find();
+    const orders = await Order.find();
     res.status(200).json(orders);
   } catch (error) {
     res.status(500).json(error);

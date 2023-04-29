@@ -34,7 +34,12 @@ router.post("/", async (req, res) => {
           "product.color": color,
           "product.price": price,
         },
-        { $inc: { "product.$.quantity": quantity } },
+        {
+          $inc: { "product.$.quantity": quantity },
+          $set: {
+            "product.$.price": price * (cart.product[0].quantity + quantity),
+          },
+        },
         { new: true }
       );
       res.status(200).json(updatedCart);
@@ -42,7 +47,7 @@ router.post("/", async (req, res) => {
       // nếu sản phẩm chưa có trong giỏ hàng, thêm sản phẩm mới vào giỏ hàng
       const newCart = new Cart({
         userId,
-        product: { productId, size, color, price, quantity },
+        product: { productId, size, color, quantity, price: price * quantity },
       });
       const savedCart = await newCart.save();
       res.status(200).json(savedCart);

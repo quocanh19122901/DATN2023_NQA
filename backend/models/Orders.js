@@ -1,29 +1,45 @@
-const mongoose = require ("mongoose");
+const mongoose = require("mongoose");
 
-const OrderSchema =  new mongoose.Schema(
-{
-    userId: { type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true,},
+const OrderSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     product: [
-        {
-            productId:{
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Product",
-                required: true,
-            },
-            quantity:{
-                type: Number,
-                default: 1,
-            },
+      {
+        productId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Product",
+          required: true,
         },
+        quantity: {
+          type: Number,
+          default: 1,
+        },
+        size: {
+          required: true,
+          type: String,
+        },
+        color: {
+          required: true,
+          type: String,
+        },
+        price: {
+          required: true,
+          type: Number,
+        },
+      },
     ],
-    phone: {type: String, required: true},
-    amount: {type: Number, required: true},
-    address:{type: Object, required: true},
-    status: {type: String, default: "on sale"},
-    total: {type:Number ,required: true},
-},
-    {timestamps: true}
+    firstName: { type: String, required: true },
+    lastName: { type: String, required: true },
+    phone: { type: String, required: true },
+    address: { type: Object, required: true },
+    status: { type: String, default: "Đang xử lý đơn hàng..." },
+    note: { type: String },
+    total: { type: Number, required: true },
+  },
+  { timestamps: true }
 );
-module.exports = mongoose.model("Order",OrderSchema);
+module.exports = mongoose.model("Order", OrderSchema);
