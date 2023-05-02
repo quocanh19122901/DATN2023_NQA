@@ -3,12 +3,12 @@ const {
   verifyTokenAndAuthorization,
   verifyTokenAndAmin,
 } = require("./verifyToken");
-const Product = require("../models/Product");
+const Product = require("../models/Products");
 const router = require("express").Router();
 const cors = require("cors");
 router.use(cors());
 //CREATE
-router.post("/", verifyTokenAndAmin, async (req, res) => {
+router.post("/", async (req, res) => {
   const newProduct = new Product(req.body);
   try {
     const saveProduct = await newProduct.save();
@@ -18,7 +18,7 @@ router.post("/", verifyTokenAndAmin, async (req, res) => {
   }
 });
 //UPDATE
-router.put("/:id", verifyTokenAndAuthorization, async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const updateProduct = await Product.findByIdAndUpdate(
       req.params.id,
@@ -46,7 +46,9 @@ router.delete("/:id", verifyTokenAndAmin, async (req, res) => {
 //GET PRODUCT
 router.get("/:id", async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findById(req.params.id).populate(
+      "CategoryId"
+    );
     res.status(200).json(product);
   } catch (err) {
     res.status(500).json(err);
@@ -56,7 +58,7 @@ router.get("/:id", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const products = await Product.find()
-      .populate("subCategoryId")
+      .populate("CategoryId")
       .sort({ _id: -1 })
       .limit(100);
     res.status(200).json(products);

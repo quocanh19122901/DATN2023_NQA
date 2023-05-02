@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    profile: { type: mongoose.Schema.Types.ObjectId, ref: "Profiles" },
     order: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
   },
   { timestamps: true }

@@ -3,7 +3,7 @@ const {
   verifyTokenAndAuthorization,
   verifyTokenAndAmin,
 } = require("./verifyToken");
-const Cart = require("../models/Cart");
+const Cart = require("../models/Carts");
 const router = require("express").Router();
 var cors = require("cors");
 router.use(cors());

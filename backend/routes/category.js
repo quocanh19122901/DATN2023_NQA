@@ -3,7 +3,7 @@ const {
   verifyTokenAndAuthorization,
   verifyTokenAndAmin,
 } = require("./verifyToken");
-const Category = require("../models/Category");
+const Category = require("../models/Categories");
 const router = require("express").Router();
 var cors = require("cors");
 router.use(cors());
@@ -70,7 +70,10 @@ router.get("/:id", async (req, res) => {
 //GET ALL Category
 router.get("/", async (req, res) => {
   try {
-    const categories = await Category.find().populate("SubCategory").sort({_id: -1}).limit(100);
+    const categories = await Category.find()
+      .populate("SubCategory")
+      .sort({ _id: -1 })
+      .limit(100);
     res.status(200).json(categories);
   } catch (err) {
     res.status(500).json(err);

@@ -17,17 +17,44 @@ router.post("/", async (req, res) => {
     res.status(500).json("error");
   }
 });
+router.put("/:id", async (req, res) => {
+  try {
+    const updateOrder = await Order.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: { status: "Đã xác nhận" },
+      },
+      { new: true }
+    );
+    res.status(200).json(updateOrder);
+  } catch (error) {
+    res.status(500).json(err);
+  }
+});
+
 //GET USER ORDER
 router.get("/myorder", verifyToken, async (req, res) => {
   try {
-    const order = await Order.find({ userId: req.params.id });
-    res.status(200).json(order);
+    const orders = await Order.find({ userId: req.user.id }).populate(
+      "product.productId"
+    );
+    res.status(200).json(orders);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+router.get("/myorder/:id", async (req, res) => {
+  try {
+    const orderDetail = await Order.findById(req.params.id).populate(
+      "product.productId"
+    );
+    res.status(200).json(orderDetail);
   } catch (err) {
     res.status(500).json(err);
   }
 });
 //GET ALL
-router.get("/", verifyTokenAndAmin, async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const orders = await Order.find();
     res.status(200).json(orders);
