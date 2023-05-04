@@ -9,6 +9,12 @@ const ProductSchema = new mongoose.Schema(
     CategoryId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
+      required: true,
+    },
+    SubCategoryId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "SubCategory",
+      required: true,
     },
     quantity: { type: Number, required: true },
     size: [{ type: Array, required: true }],

@@ -42,6 +42,21 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json(err);
   }
 });
+//SEARCH
+router.get("/search", async (req, res) => {
+  let { productName } = req.query;
+  try {
+    // Thay thế các kí tự đặc biệt và khoảng trắng bằng dấu "\"
+    productName = productName.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    // Tách các từ khóa bằng khoảng trắng và tìm kiếm với $regex
+    const keywords = productName.split(/\s+/);
+    const regex = new RegExp(keywords.join("|"), "i");
+    const products = await Product.find({ productName: regex });
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
 
 //GET PRODUCT
 router.get("/:id", async (req, res) => {
@@ -58,7 +73,7 @@ router.get("/:id", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const products = await Product.find()
-      .populate("CategoryId")
+      .populate("CategoryId", "SubCategory")
       .sort({ _id: -1 })
       .limit(100);
     res.status(200).json(products);

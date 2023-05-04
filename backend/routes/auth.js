@@ -17,16 +17,26 @@ router.use(cookieParser());
 
 //REGISTER
 router.post("/register", async (req, res) => {
-  const newUser = new User({
-    username: req.body.username,
-    email: req.body.email,
-    password: CryptoJS.AES.encrypt(
-      req.body.password,
-      process.env.PASS_SEC
-    ).toString(),
-    isAdmin: req.body.isAdmin,
-  });
   try {
+    const existingUser = await User.findOne({
+      $or: [{ email: req.body.email }, { username: req.body.username }],
+    });
+    if (existingUser) {
+      return res
+        .status(400)
+        .json({ message: "Email hoặc tài khoản đã được sử dụng." });
+    }
+
+    const newUser = new User({
+      username: req.body.username,
+      email: req.body.email,
+      password: CryptoJS.AES.encrypt(
+        req.body.password,
+        process.env.PASS_SEC
+      ).toString(),
+      isAdmin: req.body.isAdmin,
+    });
+
     const savedUser = await newUser.save();
     res.status(201).json(savedUser);
   } catch (error) {
@@ -54,7 +64,7 @@ router.post("/login", async (req, res) => {
         isAdmin: user.isAdmin,
       },
       process.env.JWT_SEC,
-      { expiresIn: "3d" }
+      { expiresIn: "30d" }
     );
 
     // Lưu JWT vào cookie
