@@ -29,7 +29,7 @@ router.put("/:id", async (req, res) => {
     );
     res.status(200).json(updateProduct);
   } catch (error) {
-    res.status(500).json(err);
+    res.status(500).json(error);
   }
 });
 
@@ -69,11 +69,20 @@ router.get("/:id", async (req, res) => {
     res.status(500).json(err);
   }
 });
+router.get("/category/:categoryId", async (req, res) => {
+  const categoryId = req.params.categoryId;
+  try {
+    const products = await Product.find({ CategoryId: categoryId });
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 //GET ALL PRODUCT
 router.get("/", async (req, res) => {
   try {
     const products = await Product.find()
-      .populate("CategoryId", "SubCategory")
+      .populate("CategoryId")
       .sort({ _id: -1 })
       .limit(100);
     res.status(200).json(products);

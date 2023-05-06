@@ -7,6 +7,7 @@ const contactSchema = new mongoose.Schema({
   phone: { type: String, required: true },
   OrderId: { type: String, required: true },
   problem: { type: String, required: true },
+  status: { type: String, default: "Đang xử lý..." },
   desire: { type: String, required: true },
 });
 module.exports = mongoose.model("Contacts", contactSchema);

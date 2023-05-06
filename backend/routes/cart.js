@@ -32,7 +32,7 @@ router.post("/", async (req, res) => {
           "product.productId": productId,
           "product.size": size,
           "product.color": color,
-          "product.price": price,
+          // "product.price": price,
         },
         {
           $inc: { "product.$.quantity": quantity },

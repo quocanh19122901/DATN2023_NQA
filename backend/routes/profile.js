@@ -26,7 +26,7 @@ router.get("/", verifyToken, async (req, res) => {
 });
 router.put("/", async (req, res) => {
   try {
-    const updateProfile = await Profiles.findByIdAndUpdate(
+    const updateProfile = await Profiles.findOneAndUpdate(
       req.params.id,
       {
         $set: req.body,
