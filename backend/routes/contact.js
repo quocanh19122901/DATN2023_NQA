@@ -38,12 +38,12 @@ router.get("/mycontact", verifyToken, async (req, res) => {
     res.status(500).json(err);
   }
 });
-// router.get("/", verifyToken, async (req, res) => {
-//   try {
-//     const contact = await Contacts.find({ userId: req.user.id });
-//     res.status(200).json(contact);
-//   } catch (err) {
-//     res.status(500).json(err);
-//   }
-// });
+router.get("/", async (req, res) => {
+  try {
+    const contact = await Contacts.find();
+    res.status(200).json(contact);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
 module.exports = router;

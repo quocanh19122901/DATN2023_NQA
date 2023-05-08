@@ -36,8 +36,10 @@ router.put("/:id", async (req, res) => {
 //DELETE
 router.delete("/:id", async (req, res) => {
   try {
-    await Product.findByIdAndDelete(req.params.id);
-    res.status(200).json("Product has been deleted !");
+    const deleteProduct = await Product.findByIdAndUpdate(req.params.id, {
+      $set: { status: "Ngừng kinh doanh" },
+    });
+    res.status(200).json(deleteProduct);
   } catch (err) {
     res.status(500).json(err);
   }
@@ -83,12 +85,19 @@ router.get("/", async (req, res) => {
   try {
     const products = await Product.find()
       .populate("CategoryId")
-      .sort({ _id: -1 })
+      .sort({ _id: 1 })
       .limit(100);
     res.status(200).json(products);
   } catch (err) {
     res.status(500).json(err);
   }
 });
-
+router.get("/top/bestselling", async (req, res) => {
+  try {
+    const products = await Product.find().sort({ sold: -1 }).limit(3);
+    res.status(200).json(products);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
 module.exports = router;

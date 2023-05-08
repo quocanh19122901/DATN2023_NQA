@@ -28,7 +28,7 @@ router.post("/", async (req, res) => {
 });
 
 //UPDATE
-router.put("/:id", verifyTokenAndAuthorization, async (req, res) => {
+router.put("/:id", async (req, res) => {
   try {
     const updateSubCategories = await SubCategories.findByIdAndUpdate(
       req.params.id,
@@ -52,9 +52,16 @@ router.delete("/:id", verifyTokenAndAmin, async (req, res) => {
     res.status(500).json(err);
   }
 });
-
+router.get("/", async (req, res) => {
+  try {
+    const subCategory = await SubCategories.find();
+    res.status(200).json(subCategory);
+  } catch (error) {
+    res.status(500).json("err");
+  }
+});
 //GET SubCategories
-router.get("/find/:id", async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const subCategory = await SubCategories.findById(req.params.id);
     res.status(200).json(subCategory);
@@ -63,13 +70,5 @@ router.get("/find/:id", async (req, res) => {
   }
 });
 //GET ALL SubCategories
-router.get("/", async (req, res) => {
-  try {
-    const subcategories = await SubCategories.find();
-    res.status(200).json(subcategories);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
 
 module.exports = router;

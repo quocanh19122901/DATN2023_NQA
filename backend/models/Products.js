@@ -11,15 +11,12 @@ const ProductSchema = new mongoose.Schema(
       ref: "Category",
       required: true,
     },
-    SubCategoryId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "SubCategory",
-    },
     quantity: { type: Number, required: true },
     size: [{ type: Array, required: true }],
     color: [{ type: Array, required: true }],
     price: { type: Number, required: true },
     sold: { type: Number, default: 1 },
+    status: { type: String, default: "Đang bày bán" },
   },
   { timestamps: true }
 );

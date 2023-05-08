@@ -5,16 +5,34 @@ const {
 } = require("./verifyToken");
 const router = require("express").Router();
 const Order = require("../models/Orders");
+const Cart = require("../models/Carts");
+const Product = require("../models/Products");
 var cors = require("cors");
 router.use(cors());
 //CREATE
-router.post("/", async (req, res) => {
+router.post("/", verifyToken, async (req, res) => {
   const newOrder = new Order(req.body);
   try {
     const saveOrder = await newOrder.save();
+
+    const cart = await Cart.find({ userId: req.user.id });
+    for (let index = 0; index < cart.length; index++) {
+      const product = await Product.findById(cart[index].product[0].productId);
+      const updateProduct = await Product.findByIdAndUpdate(
+        cart[index].product[0].productId,
+        {
+          $set: {
+            quantity: product.quantity - cart[index].product[0].quantity,
+            sold: product.sold + cart[index].product[0].quantity,
+          },
+        },
+        { new: true }
+      );
+    }
+    await Cart.deleteMany({ userId: req.user.id });
     res.status(200).json(saveOrder);
   } catch (error) {
-    res.status(500).json("error");
+    res.status(500).json(error);
   }
 });
 router.put("/:id", async (req, res) => {
@@ -62,39 +80,32 @@ router.get("/", async (req, res) => {
     res.status(500).json(error);
   }
 });
-
-//GET MONTHLY INCOME
-
 router.get("/income", verifyTokenAndAmin, async (req, res) => {
-  const date = new Date();
-  const lastMonth = new Date(date.setMonth(date.getMonth() - 1));
-  const prevMonth = new Date(date.setMonth(lastMonth.getMonth() - 1));
-
   try {
-    const income = await Order.aggregate([
+    // Lấy thông tin doanh thu và số lượng đơn hàng của từng tháng
+    const monthlyData = await Order.aggregate([
       {
         $match: {
-          createAt: {
-            $gte: prevMonth,
-          },
-        },
-      },
-      {
-        $project: {
-          month: { $month: "createAt" },
-          sales: "$amount",
+          status: "Đã xác nhận",
         },
       },
       {
         $group: {
-          _id: "$month",
-          total: { $sum: "$sales" },
+          _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } },
+          total: { $sum: "$total" },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $sort: {
+          _id: 1,
         },
       },
     ]);
-    res.status(200).json(income);
+    res.status(200).json({ monthlyData });
   } catch (error) {
     res.status(500).json(error);
   }
 });
+
 module.exports = router;

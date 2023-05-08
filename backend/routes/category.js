@@ -46,7 +46,7 @@ router.put("/:id", async (req, res) => {
 });
 
 //DELETE
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", verifyTokenAndAmin, async (req, res) => {
   try {
     await Category.findByIdAndDelete(req.params.id);
     res.status(200).json("Category has been deleted !");
