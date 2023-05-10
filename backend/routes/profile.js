@@ -24,10 +24,10 @@ router.get("/", verifyToken, async (req, res) => {
     res.status(500).json(err);
   }
 });
-router.put("/", async (req, res) => {
+router.put("/", verifyToken, async (req, res) => {
   try {
     const updateProfile = await Profiles.findOneAndUpdate(
-      req.params.id,
+      { userId: req.user.id },
       {
         $set: req.body,
       },
@@ -35,7 +35,7 @@ router.put("/", async (req, res) => {
     );
     res.status(200).json(updateProfile);
   } catch (error) {
-    res.status(500).json(err);
+    res.status(500).json(error);
   }
 });
 module.exports = router;
