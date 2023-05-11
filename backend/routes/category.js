@@ -70,10 +70,7 @@ router.get("/:id", async (req, res) => {
 //GET ALL Category
 router.get("/", async (req, res) => {
   try {
-    const categories = await Category.find()
-      .populate("SubCategory")
-      .sort({ _id: -1 })
-      .limit(100);
+    const categories = await Category.find().sort({ _id: -1 }).limit(100);
     res.status(200).json(categories);
   } catch (err) {
     res.status(500).json(err);

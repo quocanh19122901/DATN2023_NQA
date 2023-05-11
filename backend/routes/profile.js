@@ -18,7 +18,9 @@ router.post("/", async (req, res) => {
 });
 router.get("/", verifyToken, async (req, res) => {
   try {
-    const profile = await Profiles.find({ userId: req.user.id });
+    const profile = await Profiles.find({ userId: req.user.id }).populate(
+      "userId"
+    );
     res.status(200).json(profile);
   } catch (err) {
     res.status(500).json(err);

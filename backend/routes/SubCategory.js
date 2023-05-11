@@ -52,14 +52,7 @@ router.delete("/:id", verifyTokenAndAmin, async (req, res) => {
     res.status(500).json(err);
   }
 });
-router.get("/", async (req, res) => {
-  try {
-    const subCategory = await SubCategories.find();
-    res.status(200).json(subCategory);
-  } catch (error) {
-    res.status(500).json("err");
-  }
-});
+
 //GET SubCategories
 router.get("/:id", async (req, res) => {
   try {
@@ -69,6 +62,22 @@ router.get("/:id", async (req, res) => {
     res.status(500).json(err);
   }
 });
+router.get("/search/:CategoryId", async (req, res) => {
+  const categoryId = req.params.CategoryId;
+  try {
+    const subcategories = await SubCategories.find({ CategoryId: categoryId });
+    res.json(subcategories);
+  } catch (error) {
+    res.status(500).json({ error: "Đã xảy ra lỗi" });
+  }
+});
 //GET ALL SubCategories
-
+router.get("/", async (req, res) => {
+  try {
+    const subCategory = await SubCategories.find().populate("CategoryId");
+    res.status(200).json(subCategory);
+  } catch (error) {
+    res.status(500).json("err");
+  }
+});
 module.exports = router;

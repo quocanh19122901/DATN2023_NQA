@@ -13,28 +13,65 @@ router.use(cors());
 router.post("/", verifyToken, async (req, res) => {
   const newOrder = new Order(req.body);
   try {
-    const saveOrder = await newOrder.save();
-
     const cart = await Cart.find({ userId: req.user.id });
+
     for (let index = 0; index < cart.length; index++) {
-      const product = await Product.findById(cart[index].product[0].productId);
+      const cartProduct = cart[index].product[0];
+      const product = await Product.findById(cartProduct.productId);
+
+      if (cartProduct.quantity > product.quantity) {
+        // Nếu số lượng trong giỏ hàng lớn hơn số lượng sản phẩm
+        return res.status(400).json({ error: "Số lượng sản phẩm không đủ." });
+      }
       const updateProduct = await Product.findByIdAndUpdate(
-        cart[index].product[0].productId,
+        cartProduct.productId,
         {
           $set: {
-            quantity: product.quantity - cart[index].product[0].quantity,
-            sold: product.sold + cart[index].product[0].quantity,
+            quantity: product.quantity - cartProduct.quantity,
+            sold: product.sold + cartProduct.quantity,
           },
         },
         { new: true }
       );
     }
+
+    // Nếu kiểm tra số lượng thành công, tiếp tục tạo đơn hàng
+    const saveOrder = await newOrder.save();
     await Cart.deleteMany({ userId: req.user.id });
+
     res.status(200).json(saveOrder);
   } catch (error) {
     res.status(500).json(error);
   }
 });
+
+router.delete("/:orderId", verifyToken, async (req, res) => {
+  const { orderId } = req.params;
+
+  try {
+    const order = await Order.findById(orderId);
+    await Order.findByIdAndUpdate(
+      orderId,
+      {
+        $set: { status: "Đã hủy" },
+      },
+      { new: true }
+    );
+    for (let index = 0; index < order.product.length; index++) {
+      const product = await Product.findById(order.product[index].productId);
+      await Product.findByIdAndUpdate(product._id, {
+        $set: {
+          quantity: product.quantity + order.product[index].quantity,
+        },
+      });
+    }
+
+    res.status(200).json(order);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
 router.put("/:id", async (req, res) => {
   try {
     const updateOrder = await Order.findByIdAndUpdate(

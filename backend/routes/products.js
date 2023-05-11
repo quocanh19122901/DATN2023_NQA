@@ -64,7 +64,7 @@ router.get("/search", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const product = await Product.findById(req.params.id).populate(
-      "CategoryId"
+      "SubCategoryId"
     );
     res.status(200).json(product);
   } catch (err) {
@@ -72,9 +72,9 @@ router.get("/:id", async (req, res) => {
   }
 });
 router.get("/category/:categoryId", async (req, res) => {
-  const categoryId = req.params.categoryId;
+  const subcategoryId = req.params.SubCategoryId;
   try {
-    const products = await Product.find({ CategoryId: categoryId });
+    const products = await Product.find({ SubCategoryId: subcategoryId });
     res.status(200).json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -84,7 +84,7 @@ router.get("/category/:categoryId", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const products = await Product.find()
-      .populate("CategoryId")
+      .populate("SubCategoryId")
       .sort({ _id: 1 })
       .limit(100);
     res.status(200).json(products);

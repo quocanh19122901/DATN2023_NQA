@@ -18,15 +18,20 @@ router.use(cookieParser());
 //REGISTER
 router.post("/register", async (req, res) => {
   try {
-    const existingUser = await User.findOne({
-      $or: [{ email: req.body.email }, { username: req.body.username }],
+    const existingEmail = await User.findOne({ email: req.body.email });
+    const existingUsername = await User.findOne({
+      username: req.body.username,
     });
-    if (existingUser) {
-      return res
-        .status(400)
-        .json({ message: "Email hoặc tài khoản đã được sử dụng." });
+
+    if (existingEmail) {
+      return res.status(400).json({ message: "Email đã được sử dụng." });
     }
 
+    if (existingUsername) {
+      return res.status(400).json({ message: "Tài khoản đã được sử dụng." });
+    }
+
+    // Tiếp tục quá trình đăng ký khi không có email hoặc tài khoản trùng
     const newUser = new User({
       username: req.body.username,
       email: req.body.email,

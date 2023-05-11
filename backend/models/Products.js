@@ -6,9 +6,9 @@ const ProductSchema = new mongoose.Schema(
     desc: [{ type: Array, required: true }],
     avatar: { type: String, required: true },
     img: [{ type: Array, required: true }],
-    CategoryId: {
+    SubCategoryId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
+      ref: "SubCategory",
       required: true,
     },
     quantity: { type: Number, required: true },
