@@ -53,7 +53,7 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const user = await User.findOne({ username: req.body.username });
-    if (!user) return res.status(401).json("Wrong account or password!");
+    if (!user) return res.status(401).json("Sai thông tin tài khoản!");
 
     const hashedPassword = CryptoJS.AES.decrypt(
       user.password,
@@ -61,7 +61,7 @@ router.post("/login", async (req, res) => {
     );
     const OriginalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
     if (OriginalPassword !== req.body.password) {
-      return res.status(401).json("Wrong account or password!");
+      return res.status(401).json("Sai thông tin tài khoản!");
     }
     const accessToken = jwt.sign(
       {

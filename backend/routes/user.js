@@ -43,7 +43,7 @@ router.delete("/:id", async (req, res) => {
 //GET USER
 router.get("/find/:id", async (req, res) => {
   try {
-    const MainUser = await User.findById(req.params.id).populate("order");
+    const MainUser = await User.findById(req.params.id).populate("profile");
     res.status(200).json(MainUser);
   } catch (err) {
     res.status(500).json(err);
@@ -83,7 +83,7 @@ router.get("/stats", verifyTokenAndAmin, async (req, res) => {
       },
     ]);
     res.status(200).json(data);
-  } catch (Err) {
+  } catch (err) {
     res.status(500).json(err);
   }
 });

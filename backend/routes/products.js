@@ -4,6 +4,7 @@ const {
   verifyTokenAndAmin,
 } = require("./verifyToken");
 const Product = require("../models/Products");
+const Order = require("../models/Orders");
 const router = require("express").Router();
 const cors = require("cors");
 router.use(cors());
@@ -11,7 +12,16 @@ router.use(cors());
 router.post("/", async (req, res) => {
   const newProduct = new Product(req.body);
   try {
+    // cloudinary.config({
+    //   cloud_name: "sample",
+    //   api_key: "874837483274837",
+    //   api_secret: "a676b67565c6767a6767d6767f676fe1",
+    //   secure: true,
     const saveProduct = await newProduct.save();
+
+    // });
+    // const image = await cloudinary.uploader.upload("my_image.jpg");
+
     res.status(200).json(saveProduct);
   } catch (error) {
     res.status(500).json(error);
@@ -71,8 +81,8 @@ router.get("/:id", async (req, res) => {
     res.status(500).json(err);
   }
 });
-router.get("/category/:categoryId", async (req, res) => {
-  const subcategoryId = req.params.SubCategoryId;
+router.get("/subcategory/:subCategoryId", async (req, res) => {
+  const subcategoryId = req.params.subCategoryId;
   try {
     const products = await Product.find({ SubCategoryId: subcategoryId });
     res.status(200).json(products);
@@ -94,7 +104,60 @@ router.get("/", async (req, res) => {
 });
 router.get("/top/bestselling", async (req, res) => {
   try {
-    const products = await Product.find().sort({ sold: -1 }).limit(3);
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1; // Lấy tháng hiện tại (từ 0 - 11)
+
+    const startDate = new Date(currentDate.getFullYear(), currentMonth - 1, 1); // Ngày đầu tiên của tháng
+    const endDate = new Date(currentDate.getFullYear(), currentMonth, 0); // Ngày cuối cùng của tháng
+
+    const products = await Order.aggregate([
+      {
+        $match: {
+          createdAt: {
+            $gte: startDate,
+            $lte: endDate,
+          },
+          status: "Đã xác nhận", // Lọc theo trạng thái đã xác nhận
+        },
+      },
+      {
+        $unwind: "$product",
+      },
+      {
+        $group: {
+          _id: "$product.productId",
+          totalSold: { $sum: "$product.quantity" },
+        },
+      },
+      {
+        $lookup: {
+          from: "products", // Tên collection chứa thông tin sản phẩm
+          localField: "_id",
+          foreignField: "_id",
+          as: "productDetails",
+        },
+      },
+      {
+        $unwind: "$productDetails",
+      },
+      {
+        $sort: { totalSold: -1 },
+      },
+      {
+        $limit: 3,
+      },
+    ]);
+
+    res.status(200).json(products);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+router.get("/top/alltime", async (req, res) => {
+  try {
+    const products = await Product.find({ status: "Đang bày bán" })
+      .sort({ sold: -1 })
+      .limit(20);
     res.status(200).json(products);
   } catch (err) {
     res.status(500).json(err);

@@ -15,7 +15,7 @@ const ProductSchema = new mongoose.Schema(
     size: [{ type: Array, required: true }],
     color: [{ type: Array, required: true }],
     price: { type: Number, required: true },
-    sold: { type: Number, default: 1 },
+    sold: { type: Number, default: 0 },
     status: { type: String, default: "Đang bày bán" },
   },
   { timestamps: true }
