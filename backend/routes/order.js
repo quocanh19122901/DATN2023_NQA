@@ -186,7 +186,7 @@ router.get("/income", verifyTokenAndAmin, async (req, res) => {
       },
       {
         $group: {
-          _id: { $dateToString: { format: "%Y-%m", date: "$createdAt" } },
+          _id: { $dateToString: { format: "%m-%Y", date: "$createdAt" } },
           total: { $sum: "$total" },
           count: { $sum: 1 },
         },

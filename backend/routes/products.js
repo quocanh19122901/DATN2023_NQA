@@ -144,7 +144,7 @@ router.get("/top/bestselling", async (req, res) => {
         $sort: { totalSold: -1 },
       },
       {
-        $limit: 3,
+        $limit: 5,
       },
     ]);
 
